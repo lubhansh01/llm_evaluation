@@ -1,3 +1,5 @@
+import os
+st.write("Files:", os.listdir())
 import streamlit as st
 import pandas as pd
 
@@ -25,7 +27,7 @@ This mirrors **real-world evaluation pipelines** used in AI research teams.
 # ----------------------------
 # LOAD DATASET
 # ----------------------------
-DATA_PATH = "data/prompts.csv"
+DATA_PATH = "prompts.csv"
 
 try:
     df = pd.read_csv(DATA_PATH)
