@@ -50,7 +50,7 @@ body {
 # =========================
 # Title
 # =========================
-st.title("🧠 Offline LLM Evaluation & Safety Intelligence Dashboard")
+st.title("🧠 LLM Evaluation & Safety Intelligence Dashboard")
 
 st.markdown("""
 This system evaluates **manually curated LLM responses** across:
@@ -192,7 +192,7 @@ st.dataframe(category_metrics, use_container_width=True)
 st.markdown("""
 <div class="section-title">🧪 Evaluation Context</div>
 <ul>
-<li>Offline, manually curated LLM responses</li>
+<li>Manually curated LLM responses</li>
 <li>Explicit hallucination and refusal testing</li>
 <li>Bias & safety checks aligned with trust frameworks</li>
 <li>Metrics comparable to internal AI evaluation tooling</li>
