@@ -18,6 +18,15 @@ st.title("🧠 Offline LLM Evaluation & Safety System")
 # -----------------------------
 try:
     df = pd.read_csv("data/prompts.csv")
+
+    # 🔥 ADD THIS
+    df.columns = (
+        df.columns
+          .str.strip()
+          .str.lower()
+          .str.replace(" ", "_")
+    )
+
     st.success("Dataset loaded successfully")
 except Exception as e:
     st.error(f"Failed to load dataset: {e}")
