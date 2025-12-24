@@ -1,116 +1,64 @@
 import streamlit as st
 import pandas as pd
-import os
 from datetime import datetime
 
-# ----------------------------
-# Page Config
-# ----------------------------
-st.set_page_config(
-    page_title="Offline LLM Evaluation & Safety System",
-    layout="wide"
-)
+from evaluators.accuracy import compute_accuracy
+from evaluators.hallucination import detect_hallucination
+from evaluators.bias_safety import detect_bias_safety
+from evaluators.confusion import detect_confusion
 
-# ----------------------------
-# Title
-# ----------------------------
+from scoring.aggregator import aggregate_metrics
+
+st.set_page_config(page_title="Offline LLM Evaluation System", layout="wide")
+
 st.title("🧠 Offline LLM Evaluation & Safety System")
 
-st.markdown("""
-This system evaluates **manually curated LLM responses** across:
-
-- Accuracy  
-- Hallucination  
-- Bias & Safety  
-- Refusal Compliance  
-
-✅ No live APIs are used  
-✅ Mirrors real-world AI evaluation pipelines  
-""")
-
-# ----------------------------
+# -----------------------------
 # Load Dataset
-# ----------------------------
-DATA_PATH = "data/prompts.csv"
-
+# -----------------------------
 try:
-    df = pd.read_csv(DATA_PATH)
+    df = pd.read_csv("data/prompts.csv")
     st.success("Dataset loaded successfully")
 except Exception as e:
     st.error(f"Failed to load dataset: {e}")
     st.stop()
 
-# ----------------------------
-# Show Raw Data
-# ----------------------------
-st.subheader("📄 Evaluation Dataset")
-st.dataframe(df, use_container_width=True)
-
-# ----------------------------
-# Accuracy Evaluation
-# ----------------------------
-st.subheader("🔍 Accuracy Evaluation")
-
-def compute_accuracy(row):
-    if row["response_type"] == "correct":
-        return 1.0
-    elif row["response_type"] == "wrong":
-        return 0.0
-    elif row["response_type"] in ["hallucinated", "biased"]:
-        return 0.0
-    elif row["expected_behaviour"] == "refuse":
-        return 0.5
-    return 0.0
-
+# -----------------------------
+# Run Evaluations
+# -----------------------------
 df["accuracy_score"] = df.apply(compute_accuracy, axis=1)
+df["hallucination_flag"] = df.apply(detect_hallucination, axis=1)
+df["safety_violation"] = df.apply(detect_bias_safety, axis=1)
+df["confusion_flag"] = df.apply(detect_confusion, axis=1)
 
-st.dataframe(
-    df[[
-        "prompt",
-        "response_text",
-        "ground_truth",
-        "response_type",
-        "accuracy_score"
-    ]],
-    use_container_width=True
-)
+# -----------------------------
+# Executive Summary
+# -----------------------------
+st.subheader("📌 Evaluation Summary")
 
-# ----------------------------
-# Aggregate Metrics
-# ----------------------------
-st.subheader("📊 Aggregate Metrics")
+metrics = aggregate_metrics(df)
 
 col1, col2, col3, col4 = st.columns(4)
+col1.metric("Avg Accuracy", metrics["avg_accuracy"])
+col2.metric("Hallucinations", metrics["hallucinations"])
+col3.metric("Safety Issues", metrics["safety_issues"])
+col4.metric("Confusions", metrics["confusions"])
 
-with col1:
-    st.metric("Avg Accuracy", round(df["accuracy_score"].mean(), 2))
+# -----------------------------
+# Detailed Views
+# -----------------------------
+st.subheader("📊 Full Evaluation Table")
+st.dataframe(df, use_container_width=True)
 
-with col2:
-    st.metric("Hallucinations", len(df[df["response_type"] == "hallucinated"]))
-
-with col3:
-    st.metric("Biased Responses", len(df[df["response_type"] == "biased"]))
-
-with col4:
-    st.metric("Correct Responses", len(df[df["response_type"] == "correct"]))
-
-# ----------------------------
-# Metadata View
-# ----------------------------
-st.subheader("🧾 Response Metadata")
-
-st.dataframe(
-    df[[
-        "model_provider",
-        "model_name",
-        "response_date"
-    ]],
-    use_container_width=True
+st.subheader("📈 Category-wise Metrics")
+category_metrics = (
+    df.groupby("category")
+      .agg(
+          avg_accuracy=("accuracy_score", "mean"),
+          hallucinations=("hallucination_flag", "sum"),
+          safety_issues=("safety_violation", "sum")
+      )
+      .reset_index()
 )
 
-# ----------------------------
-# Footer
-# ----------------------------
-st.caption(
-    f"Last evaluated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-)
+st.dataframe(category_metrics, use_container_width=True)
