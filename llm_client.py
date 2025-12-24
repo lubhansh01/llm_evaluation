@@ -2,17 +2,17 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-# Load environment variables
 load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 if not API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in environment variables")
+    raise ValueError("GEMINI_API_KEY not found")
 
 genai.configure(api_key=API_KEY)
 
-model = genai.GenerativeModel("gemini-pro")
+# ✅ UPDATED MODEL NAME
+model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 def get_llm_response(prompt: str) -> str:
     try:
