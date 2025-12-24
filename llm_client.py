@@ -1,24 +1,18 @@
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
+from openai import OpenAI
 
-# Load env vars
 load_dotenv()
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in environment variables")
-
-# Configure Gemini
-genai.configure(api_key=API_KEY)
-
-# ✅ API-key supported model
-model = genai.GenerativeModel("gemini-1.0-pro")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def get_llm_response(prompt: str) -> str:
     try:
-        response = model.generate_content(prompt)
-        return response.text.strip()
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"ERROR: {e}"
