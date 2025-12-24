@@ -12,7 +12,7 @@ if not API_KEY:
 genai.configure(api_key=API_KEY)
 
 # ✅ UPDATED MODEL NAME
-model = genai.GenerativeModel("models/gemini-1.5-flash")
+model = genai.GenerativeModel("models/gemini-1.5-pro")
 
 def get_llm_response(prompt: str) -> str:
     try:
