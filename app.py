@@ -9,9 +9,9 @@ from evaluators.confusion import detect_confusion
 
 from scoring.aggregator import aggregate_metrics
 
-st.set_page_config(page_title="Offline LLM Evaluation System", layout="wide")
+st.set_page_config(page_title="LLM Evaluation System", layout="wide")
 
-st.title("🧠 Offline LLM Evaluation & Safety System")
+st.title("🧠 LLM Evaluation & Safety System")
 
 # -----------------------------
 # Load Dataset
