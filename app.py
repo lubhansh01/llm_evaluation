@@ -1,7 +1,8 @@
-import os
-st.write("Files:", os.listdir())
 import streamlit as st
 import pandas as pd
+import os
+
+st.set_page_config(page_title="LLM Evaluation System", layout="wide")
 
 # ----------------------------
 # PAGE CONFIG
