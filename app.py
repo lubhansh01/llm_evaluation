@@ -6,7 +6,7 @@ import streamlit as st
 # Page Config
 # =========================
 st.set_page_config(
-    page_title="Offline LLM Evaluation & Safety System",
+    page_title="LLM Evaluation & Safety System",
     page_icon="🧠",
     layout="wide"
 )
