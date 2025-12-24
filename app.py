@@ -85,7 +85,7 @@ if st.button("Run Evaluation"):
     results = []
 
     with st.spinner("Evaluating prompts..."):
-        for _, row in df.iterrows():
+        for _, row in df.head(10).iterrows():
             prompt = row["prompt"]
             ground_truth = str(row["ground_truth"]).strip().lower()
 
