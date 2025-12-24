@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import streamlit as st
 
+from llm_client import get_llm_response
 from evaluators.accuracy import accuracy_score
 
 # Page config
@@ -43,7 +44,7 @@ def mock_llm_response(prompt):
 results = []
 
 for _, row in df.iterrows():
-    response = mock_llm_response(row["prompt"])
+    response = get_llm_response(row["prompt"])
     acc = accuracy_score(response, row["ground_truth"])
 
     results.append({
