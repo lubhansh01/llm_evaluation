@@ -1,22 +1,24 @@
 import os
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
 
+# Load env vars
 load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 if not API_KEY:
-    raise ValueError("GEMINI_API_KEY not found")
+    raise ValueError("GEMINI_API_KEY not found in environment variables")
 
-client = genai.Client(api_key=API_KEY)
+# Configure Gemini
+genai.configure(api_key=API_KEY)
+
+# ✅ API-key supported model
+model = genai.GenerativeModel("gemini-1.0-pro")
 
 def get_llm_response(prompt: str) -> str:
     try:
-        response = client.models.generate_content(
-            model="gemini-1.5-flash",
-            contents=prompt
-        )
-        return response.text
+        response = model.generate_content(prompt)
+        return response.text.strip()
     except Exception as e:
         return f"ERROR: {e}"
