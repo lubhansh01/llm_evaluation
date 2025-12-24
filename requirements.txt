@@ -1,5 +1,2 @@
-zhipuai
-requests
 streamlit
 pandas
-python-dotenv
